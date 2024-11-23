@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SOFTWARE_NAME=Zanalyx
+
+      - MONGODB_URL=
+      - JWT_SECRET=
+
+      - MERCADO_PAGO_ACCESS_TOKEN=
+      - MERCADO_PAGO_PUBLIC_KEY=
+      - STATEMENT_DESCRIPTOR=
+
+      - PRICE=
+
+      - SMTP_SERVER=
+      - SMTP_PORT=
+      - SMTP_USERNAME=
+      - SMTP_PASSWORD=
+      - FROM_EMAIL=
+
+      - WHALE_ALERT_API_KEY=
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+    volumes:
+      - ./ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    command: serve
